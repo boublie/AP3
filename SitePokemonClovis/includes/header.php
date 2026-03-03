@@ -2,46 +2,120 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>PokéPlush - Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéPlush - Pokédex</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Police Pixel -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* DESIGN GLOBAL */
+        body {
+            background-color: #1a1d21 !important;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* HEADER ROUGE */
+        .pokedex-header {
+            background-color: #dc0a2d !important;
+            border-bottom: 5px solid #8e1a1a;
+            padding: 10px 0;
+            margin-bottom: 40px;
+        }
+        .logo-font {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        /* LA CARTE POKÉMON (Le fond vert/bleu pixelisé) */
+        .pokemon-card {
+            background: linear-gradient(135deg, #1d4d4f 0%, #0d1a1b 100%);
+            border: 2px solid #2d5a5c;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* EFFET SCANLINE (Les lignes de pixels) */
+        .pokemon-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* IMAGE ET ANIMATION */
+        .pokemon-img-container {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.4s ease;
+        }
+        
+        .pokemon-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .pokemon-card:hover .pokemon-img-container {
+            transform: scale(1.2) rotate(5deg); /* Le Pokémon zoom et bouge */
+        }
+
+        /* TEXTES */
+        .pokemon-number {
+            color: #00ffcc;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .price-text {
+            color: #ffca28;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        /* BOUTON PANIER */
+        .cart-btn {
+            background: #ff1744;
+            border: none;
+            color: white;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            z-index: 3;
+            position: relative;
+        }
+        .cart-btn:hover { background: white; color: #ff1744; }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+<nav class="navbar navbar-expand-lg pokedex-header">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="index.php">🔴 POKÉPLUSH</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
-        
-        <!-- Menu Déroulant Produits -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Produits</a>
-          <ul class="dropdown-menu border-dark">
-            <li><a class="dropdown-item" href="produits.php">Tous les produits</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="produits.php?type=Feu">Type Feu</a></li>
-            <li><a class="dropdown-item" href="produits.php?type=Eau">Type Eau</a></li>
-            <li><a class="dropdown-item" href="produits.php?type=Plante">Type Plante</a></li>
-          </ul>
-        </li>
-
-        <!-- Menu Déroulant Catégories -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Catégories</a>
-          <ul class="dropdown-menu border-dark">
-            <li><a class="dropdown-item" href="categories.php?cat=peluches">Peluches</a></li>
-            <li><a class="dropdown-item" href="categories.php?cat=figurines">Figurines</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item"><a class="nav-link" href="clients.php">Clients</a></li>
-      </ul>
-      <a href="panier.php" class="btn btn-warning fw-bold border-dark">🛒 PANIER</a>
+    <a class="logo-font" href="index.php">🔴 PokéPlush</a>
+    <div class="ms-auto">
+        <a href="index.php" class="btn text-white">Accueil</a>
+        <a href="produits.php" class="btn btn-dark shadow-sm">Pokédex</a>
     </div>
   </div>
 </nav>
+
+<div class="container">

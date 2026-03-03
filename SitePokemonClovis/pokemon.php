@@ -1,49 +1,45 @@
-<?php
-// On récupère le choix de l'utilisateur
-if (!isset($_POST["id_pokemon"])) {
-    header("Location: index.php");
-    exit;
-}
+<?php 
+include 'data/produits.php';
+include 'includes/header.php'; 
 
-// Tes données de peluches (Pokédex)
-$produits = [
-    1 => ["numero" => "001", "nom" => "Peluche Bulbizarre", "type" => "Plante / Poison", "prix" => 24.99, "taille" => "25 cm"],
-    4 => ["numero" => "004", "nom" => "Peluche Salamèche", "type" => "Feu", "prix" => 22.99, "taille" => "23 cm"],
-    7 => ["numero" => "007", "nom" => "Peluche Carapuce", "type" => "Eau", "prix" => 23.99, "taille" => "24 cm"],
-    25 => ["numero" => "025", "nom" => "Peluche Pikachu", "type" => "Électrik", "prix" => 26.99, "taille" => "30 cm"]
-];
-
-$id = $_POST["id_pokemon"];
-$produit = $produits[$id];
+$id = $_GET['id'] ?? 1; // On récupère l'ID, par défaut 1 (Bulbizarre)
+$p = $produits[$id]; // On cherche le Pokémon correspondant
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo $produit["nom"]; ?></title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<div class="container py-5">
+    <a href="produits.php" class="btn btn-outline-danger mb-4">← Retour au Pokédex</a>
 
-    <nav>
-        <a href="index.php">Accueil</a> | <a href="produits.php">Produits</a> | <a href="categories.php">Catégories</a> | <a href="clients.php">Clients</a>
-    </nav>
+    <div class="pokemon-card p-5">
+        <div class="row align-items-center">
+            <!-- Image à gauche -->
+            <div class="col-md-5 text-center">
+                <div class="pokemon-img-container p-4">
+                    <img src="<?= $p['image'] ?>" class="img-fluid" style="max-height: 400px; filter: drop-shadow(0 0 30px rgba(0,255,204,0.4));">
+                </div>
+            </div>
 
-    <h1>Fiche Produit</h1>
+            <!-- Infos à droite -->
+            <div class="col-md-7 ps-md-5">
+                <span class="pokemon-number fs-3">#<?= $p['numero'] ?></span>
+                <h1 class="display-3 fw-bold text-white text-uppercase"><?= $p['nom'] ?></h1>
+                
+                <div class="my-4">
+                    <span class="badge bg-info p-2 px-4 fs-5 text-dark">TYPE : <?= $p['type'] ?></span>
+                    <span class="badge bg-warning p-2 px-4 fs-5 text-dark ms-2">QUALITÉ : Peluche XL</span>
+                </div>
 
-    <div style="border: 1px solid #000; padding: 20px; width: 300px;">
-        <h2><?php echo $produit["nom"]; ?></h2>
-        <p><strong>Numéro Pokédex :</strong> <?php echo $produit["numero"]; ?></p>
-        <p><strong>Type :</strong> <?php echo $produit["type"]; ?></p>
-        <p><strong>Taille :</strong> <?php echo $produit["taille"]; ?></p>
-        <p><strong>Prix :</strong> <?php echo $produit["prix"]; ?> €</p>
+                <p class="fs-4 text-secondary">
+                    Cette peluche officielle de <?= $p['nom'] ?> est fabriquée en coton ultra-doux. 
+                    Idéale pour les dresseurs cherchant un compagnon de route pour leurs aventures à Kanto.
+                </p>
 
-        <button onclick="alert('Article ajouté au panier (simulation)')">Ajouter au panier</button>
+                <div class="d-flex align-items-center mt-5">
+                    <div class="price-text display-4 me-5"><?= $p['prix'] ?> €</div>
+                    <button class="btn btn-danger btn-lg px-5 py-3 fw-bold shadow">AJOUTER AU PANIER</button>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <br>
-    <a href="index.php">Retour au choix</a>
-
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>
