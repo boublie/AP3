@@ -1,0 +1,53 @@
+/* Couleurs Pokédex */
+:root {
+    --pokedex-red: #dc0a2d;
+    --pokedex-dark-red: #8e1a1a;
+    --pokedex-blue: #28a1c9;
+    --pokedex-screen: #91e5f6;
+}
+
+body {
+    background-color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar style Pokédex */
+.navbar {
+    background: linear-gradient(180deg, var(--pokedex-red), var(--pokedex-dark-red)) !important;
+    border-bottom: 5px solid #333;
+}
+
+/* Carte Pokémon façon écran de Pokédex */
+.poke-card {
+    background: white;
+    border: 10px solid #dedede;
+    border-radius: 15px 15px 15px 50px; /* Forme asymétrique Pokédex */
+    box-shadow: 5px 5px 0px #555;
+    transition: 0.3s;
+}
+
+.poke-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--pokedex-blue);
+}
+
+.poke-img-container {
+    background-color: var(--pokedex-screen);
+    border: 3px solid #333;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.btn-pokedex {
+    background-color: var(--pokedex-red);
+    color: white;
+    border-radius: 20px;
+    font-weight: bold;
+    border: 2px solid #333;
+}
+
+.btn-pokedex:hover {
+    background-color: var(--pokedex-blue);
+    color: white;
+}
