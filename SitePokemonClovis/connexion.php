@@ -1,9 +1,14 @@
 <?php 
+// 1. D'abord la base de données et la session
 include 'includes/db.php';
-include 'includes/header.php'; 
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $erreur = "";
 
+// 2. LA LOGIQUE DE CONNEXION (Doit être avant le moindre HTML)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $mdp = $_POST['mdp'];
@@ -13,15 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $stmt->fetch();
 
     if ($user && password_verify($mdp, $user['mdp'])) {
-        // Connexion réussie : on stocke les infos dans la SESSION
+        // Connexion réussie
         $_SESSION['client_id'] = $user['id_client'];
         $_SESSION['client_nom'] = $user['nom'];
+        
+        // ICI la redirection va marcher car le header.php n'est pas encore chargé !
         header("Location: index.php");
-        exit();
+        exit(); 
     } else {
         $erreur = "<div class='alert alert-danger'>Identifiants incorrects, dresseur.</div>";
     }
 }
+
+// 3. MAINTENANT SEULEMENT, ON APPELLE LE VISUEL
+include 'includes/header.php'; 
 ?>
 
 <div class="container py-5">
