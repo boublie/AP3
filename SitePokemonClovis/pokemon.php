@@ -12,10 +12,9 @@ $p = $produits[$id]; // On cherche le Pokémon correspondant
     <div class="pokemon-card p-5">
         <div class="row align-items-center">
             <!-- Image à gauche -->
-            <div class="col-md-5 text-center">
-                <div class="pokemon-img-container p-4">
-                    <img src="<?= $p['image'] ?>" class="img-fluid" style="max-height: 400px; filter: drop-shadow(0 0 30px rgba(0,255,204,0.4));">
-                </div>
+            <div class="col-md-5">
+    <!-- Plus de 'img/' devant, on utilise l'URL directe -->
+                 <img src="<?= $p['image'] ?>" class="img-fluid" style="filter: drop-shadow(0 0 20px rgba(0,255,204,0.5));">
             </div>
 
             <!-- Infos à droite -->

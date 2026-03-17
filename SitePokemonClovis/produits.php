@@ -1,62 +1,45 @@
 <?php 
-// 1. Initialisation et récupération des données (INCLUSION ORIGINALE)
-include 'data/produits.php'; 
-
-// 2. --- LOGIQUE DE FILTRAGE (NOUVEAU CODE) ---
-// On récupère le type dans l'URL (ex: produits.php?type=Feu)
-$type_choisi = $_GET['type'] ?? null; 
-
-if ($type_choisi) {
-    // On ne garde que les Pokémon qui ont le bon type
-    $produits_a_afficher = array_filter($produits, function($p) use ($type_choisi) {
-        return $p['type'] === $type_choisi;
-    });
-} else {
-    // Sinon on affiche tout
-    $produits_a_afficher = $produits;
-}
-// ---------------------------
-
-// 3. Inclusion de l'en-tête (INCLUSION ORIGINALE)
+// 1. On inclut la connexion à la base au lieu du fichier data
+include 'includes/db.php'; 
 include 'includes/header.php'; 
+
+// 2. On prépare la requête SQL pour récupérer tous les produits
+$query = $pdo->query("SELECT * FROM produit");
+$produits = $query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container py-5">
-    
-    <div class="mb-5">
-        <h1 class="fw-bold text-white">Pokédex</h1>
-        <p class="text-secondary">Mode : <?= $type_choisi ? "Filtrage par " . $type_choisi : "Affichage global" ?></p>
-    </div>
+<div class="mb-5 mt-5">
+    <h1 class="fw-bold">Pokédex</h1>
+</div>
 
-    <div class="mb-5 d-flex flex-wrap gap-2">
-        <a href="produits.php" class="btn btn-outline-light <?= !$type_choisi ? 'active' : '' ?>">Tous</a>
-        <?php 
-        $types = ["Plante", "Feu", "Eau", "Électrik", "Normal", "Psy", "Poison"];
-        foreach($types as $t): 
-        ?>
-            <a href="produits.php?type=<?= $t ?>" class="btn btn-outline-info <?= $type_choisi == $t ? 'active' : '' ?>">
-                <?= $t ?>
-            </a>
-        <?php endforeach; ?>
-    </div>
-
-    <div class="row g-4">
-        <?php foreach ($produits_a_afficher as $p): ?> <div class="col-md-3">
-                 <div class="pokemon-card d-flex flex-column h-100" onclick="window.location.href='pokemon.php?id=<?= $p['id'] ?>'">
-                    <div class="pokemon-number">#<?= $p['numero'] ?></div>
-                    <div class="pokemon-img-container text-center my-4">
-                        <img src="<?= $p['image'] ?>" class="img-fluid" style="max-height: 160px;">
-                    </div>
-                    <h5 class="fw-bold text-uppercase text-white mt-2"><?= $p['nom'] ?></h5>
-                    <div class="mt-auto d-flex justify-content-between align-items-center pt-3">
-                        <div class="price-text"><?= $p['prix'] ?> €</div>
-                        <button class="cart-btn">🛒</button>
-                    </div>
-                 </div>
+<div class="row g-4">
+    <?php foreach ($produits as $p): ?>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        
+        <!-- On utilise les noms de colonnes de ta table SQL -->
+        <div class="pokemon-card d-flex flex-column">
+            
+            <div class="pokemon-number">#<?= str_pad($p['num_pokedex'], 3, "0", STR_PAD_LEFT) ?></div>
+            
+            <div class="pokemon-img-container text-center my-4">
+    <!-- On affiche directement le contenu de la colonne 'image' car c'est une URL -->
+                <img src="<?= $p['image'] ?>" 
+                 class="img-fluid" 
+                alt="<?= $p['nom'] ?>" 
+                style="max-height: 160px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));">
             </div>
-        <?php endforeach; ?>
-    </div>
 
+            <h5 class="fw-bold text-uppercase text-white mt-2"><?= $p['nom'] ?></h5>
+            
+            <div class="mt-auto d-flex justify-content-between align-items-center pt-3">
+                <div class="price-text"><?= $p['prix'] ?> €</div>
+                <!-- Lien vers la page détail avec l'ID de la base -->
+                <a href="pokemon.php?id=<?= $p['ref_produit'] ?>" class="cart-btn text-decoration-none d-flex align-items-center justify-content-center">🛒</a>
+            </div>
+
+        </div>
+    </div>
+    <?php endforeach; ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>
