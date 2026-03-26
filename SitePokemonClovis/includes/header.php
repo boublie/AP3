@@ -1,5 +1,5 @@
 <?php 
-// OBLIGATOIRE : Doit être la toute première ligne pour que la connexion fonctionne
+// 1. Démarrage de la session (Indispensable pour la connexion)
 if (session_status() === PHP_SESSION_NONE) {
     session_start(); 
 }
@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Police Pixel -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <style>
         /* DESIGN GLOBAL */
@@ -25,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* HEADER ROUGE */
+        /* HEADER ROUGE POKEDEX */
         .pokedex-header {
             background-color: #dc0a2d !important;
             border-bottom: 5px solid #8e1a1a;
@@ -39,7 +39,7 @@ if (session_status() === PHP_SESSION_NONE) {
             text-decoration: none;
         }
 
-        /* LA CARTE POKÉMON */
+        /* STYLE DES CARTES (PRODUITS ET DRESSEURS) */
         .pokemon-card {
             background: linear-gradient(135deg, #1d4d4f 0%, #0d1a1b 100%);
             border: 2px solid #2d5a5c;
@@ -52,7 +52,7 @@ if (session_status() === PHP_SESSION_NONE) {
             height: 100%;
         }
 
-        /* EFFET SCANLINE */
+        /* EFFET SCANLINE (PIXELS) */
         .pokemon-card::before {
             content: "";
             position: absolute;
@@ -65,6 +65,7 @@ if (session_status() === PHP_SESSION_NONE) {
         .pokemon-img-container { position: relative; z-index: 2; transition: transform 0.4s ease; }
         .pokemon-card:hover { transform: translateY(-10px); border-color: #00ffcc; box-shadow: 0 0 20px rgba(0, 255, 204, 0.3); }
         .pokemon-card:hover .pokemon-img-container { transform: scale(1.2) rotate(5deg); }
+        
         .pokemon-number { color: #00ffcc; font-family: monospace; font-weight: bold; font-size: 1.1rem; }
         .price-text { color: #ffca28; font-weight: bold; font-size: 1.3rem; }
 
@@ -78,6 +79,8 @@ if (session_status() === PHP_SESSION_NONE) {
             text-decoration: none;
         }
         .cart-btn:hover { background: white; color: #ff1744; }
+        
+        .nav-link:hover { color: #ffeb3b !important; }
     </style>
 </head>
 <body>
@@ -87,29 +90,37 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- Logo -->
     <a class="logo-font" href="index.php">🔴 PokéPlush</a>
     
-    <!-- Bouton mobile -->
+    <!-- Bouton pour mobile -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navMenu">
-      <!-- Liens Gauche -->
+      <!-- Liens du menu -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link text-white" href="index.php">Accueil</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="produits.php">Pokédex</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="clients.php">Dresseurs</a></li>
       </ul>
 
-      <!-- Liens Droite (Dynamiques) -->
+      <!-- Partie Droite : Connexion / Profil -->
       <div class="d-flex align-items-center">
         <?php if (isset($_SESSION['client_id'])): ?>
-            <!-- Si le dresseur est connecté -->
-            <span class="text-warning me-3 fw-bold small">Lv.99 <?= strtoupper($_SESSION['client_nom']) ?></span>
+            <!-- SI LE DRESSEUR EST CONNECTÉ -->
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=<?= $_SESSION['client_avatar'] ?? 'Ash' ?>" 
+                 style="width: 35px; height: 35px; background: #333;" class="rounded-circle me-2 border border-white">
+            
+            <a href="profil.php" class="text-warning me-3 fw-bold small text-decoration-none">
+                <?= strtoupper($_SESSION['client_nom']) ?> ⚙️
+            </a>
+            
             <a href="deconnexion.php" class="btn btn-sm btn-outline-light me-3">Quitter</a>
+
         <?php else: ?>
-            <!-- Si non connecté -->
+            <!-- SI LE DRESSEUR N'EST PAS CONNECTÉ -->
             <a href="connexion.php" class="btn btn-sm btn-outline-light me-2">Connexion</a>
             <a href="inscription.php" class="btn btn-sm btn-warning fw-bold text-dark">S'inscrire</a>
+
         <?php endif; ?>
 
         <!-- Panier -->
@@ -119,5 +130,5 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 </nav>
 
-<!-- Début du contenu des pages -->
+<!-- Début du contenu principal -->
 <div class="container">

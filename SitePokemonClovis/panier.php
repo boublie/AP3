@@ -1,70 +1,83 @@
 <?php 
-include 'data/produits.php';
-include 'includes/header.php'; 
+include 'includes/db.php';
+include 'includes/header.php'; // Inclut le session_start() normalement
 
-// On simule un panier avec quelques articles pour l'exemple
-$panier_ids = [1, 4, 25]; // Bulbizarre, Salamèche, Pikachu
-$total = 0;
+$panier_ids = $_SESSION['panier'] ?? []; // Récupère les IDs du panier
+$total_panier = 0; // Initialise le total
+
+// S'il y a des IDs dans le panier
+if (!empty($panier_ids)) {
+    // Compte la quantité de chaque produit (si on ajoute 2x Bulbizarre)
+    $quantites_par_produit = array_count_values($panier_ids);
+    
+    // Transforme la liste d'IDs [1, 1, 4] en "1,4" pour la requête SQL
+    $ids_uniques = implode(',', array_keys($quantites_par_produit));
+
+    // Récupère les infos complètes des produits dans la base de données
+    $stmt = $pdo->query("SELECT ref_produit, nom, prix, image FROM produit WHERE ref_produit IN ($ids_uniques)");
+    $produits_details_panier = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} else {
+    $produits_details_panier = []; // Panier vide
+}
 ?>
 
 <div class="container py-5">
-    <div class="mb-5 d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="fw-bold text-white">VOTRE INVENTAIRE</h1>
-            <p class="text-secondary">Objets prêts pour l'envoi</p>
+    <h1 class="fw-bold text-white mb-5 text-uppercase">Votre Poké-Sac</h1>
+
+    <?php if (empty($produits_details_panier)): ?>
+        <div class="pokemon-card p-5 text-center">
+            <h3 class="text-secondary">Votre sac de dresseur est vide...</h3>
+            <a href="produits.php" class="btn btn-danger mt-3">Allez capturer des peluches !</a>
         </div>
-        <a href="produits.php" class="btn btn-outline-info">Continuer la capture</a>
-    </div>
+    <?php else: ?>
+        <div class="pokemon-card p-4">
+            <table class="table table-dark table-borderless align-middle">
+                <thead>
+                    <tr class="text-secondary small border-bottom border-secondary">
+                        <th>PELUCHE</th>
+                        <th>NOM</th>
+                        <th>PRIX UNITAIRE</th>
+                        <th>QUANTITÉ</th>
+                        <th class="text-end">SOUS-TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($produits_details_panier as $p): 
+                        $quantite = $quantites_par_produit[$p['ref_produit']];
+                        $sous_total_produit = $p['prix'] * $quantite;
+                        $total_panier += $sous_total_produit;
+                    ?>
+                    <tr class="border-bottom border-dark">
+                        <td><img src="<?= $p['image'] ?>" width="60"></td>
+                        <td class="fw-bold text-uppercase"><?= htmlspecialchars($p['nom']) ?></td>
+                        <td><?= number_format($p['prix'], 2) ?> €</td>
+                        <td>x<?= $quantite ?></td>
+                        <td class="text-end fw-bold text-warning"><?= number_format($sous_total_produit, 2) ?> €</td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
 
-    <div class="pokemon-card p-4">
-        <table class="table table-dark table-borderless align-middle mb-0">
-            <thead class="border-bottom border-secondary">
-                <tr class="text-secondary small">
-                    <th>PRODUIT</th>
-                    <th>NOM</th>
-                    <th class="text-center">QUANTITÉ</th>
-                    <th class="text-end">PRIX</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($panier_ids as $id): 
-                    $p = $produits[$id];
-                    $total += (float)$p['prix'];
-                ?>
-                <tr class="border-bottom border-dark">
-                    <td style="width: 100px;">
-                        <div class="bg-white rounded p-1" style="width: 60px;">
-                            <img src="<?= $p['image'] ?>" class="img-fluid">
-                        </div>
-                    </td>
-                    <td>
-                        <span class="fw-bold text-uppercase"><?= $p['nom'] ?></span><br>
-                        <small class="text-info">#<?= $p['numero'] ?></small>
-                    </td>
-                    <td class="text-center">1</td>
-                    <td class="text-end fw-bold"><?= $p['prix'] ?> €</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-outline-danger">❌</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <!-- TOTAL -->
-        <div class="row mt-4 pt-3 border-top border-secondary">
-            <div class="col-md-6 offset-md-6 text-end">
-                <p class="mb-1 text-secondary">SOUS-TOTAL : <span class="text-white"><?= $total ?> €</span></p>
-                <p class="mb-1 text-secondary">TAXES (PDC) : <span class="text-white">2.50 €</span></p>
-                <h2 class="price-text mt-2">TOTAL : <?= $total + 2.50 ?> €</h2>
+            <div class="text-end mt-4">
+                <h2 class="price-text display-5">TOTAL DU SAC : <?= number_format($total_panier, 2) ?> €</h2>
                 
-                <button class="btn btn-danger btn-lg w-100 mt-4 fw-bold py-3 shadow">
-                    VALIDER LA COMMANDE (LANCER LA POKÉBALL)
-                </button>
+                <?php if (isset($_SESSION['client_id'])): ?>
+                    <form action="valider_commande.php" method="POST">
+                        <button type="submit" class="btn btn-danger btn-lg px-5 mt-3 fw-bold shadow">
+                            VALIDER L'ACHAT
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <div class="alert alert-warning mt-3 bg-dark text-warning border-warning">
+                        Connectez-vous pour valider votre achat, dresseur !
+                    </div>
+                <?php endif; ?>
+                
+                <a href="vider_panier.php" class="btn btn-sm btn-link text-secondary mt-2">Vider le sac</a>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>

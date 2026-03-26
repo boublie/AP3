@@ -8,7 +8,7 @@ $p = $produits[$id]; // On cherche le Pokémon correspondant
 
 <div class="container py-5">
     <a href="produits.php" class="btn btn-outline-danger mb-4">← Retour au Pokédex</a>
-
+    <a href="ajouter_panier.php?id=<?= $p['ref_produit'] ?>" class="btn btn-danger btn-lg px-5 py-3 fw-bold shadow">AJOUTER AU PANIER</a>
     <div class="pokemon-card p-5">
         <div class="row align-items-center">
             <!-- Image à gauche -->
